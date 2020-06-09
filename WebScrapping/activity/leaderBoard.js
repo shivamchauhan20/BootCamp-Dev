@@ -2,6 +2,7 @@ let request = require('request');
 let fs = require('fs');
 let cheerio = require('cheerio');
 let url = "https://www.espncricinfo.com/scores/series/19322/india-in-new-zealand-2019-20?view=results";
+let leaderboard=[],count = 0;
 console.log("Sending Request");
 request(url, function (error, response, html) {
     console.log("Received Response");
@@ -32,6 +33,7 @@ function parseSeriesPage(html) {
             let fullLink = `https://www.espncricinfo.com${link}`;
             // console.log(fullLink);
             handleEachMatch(fullLink);
+            count++;
         }
     }
 }
@@ -40,6 +42,10 @@ function handleEachMatch(link) {
         if (error == null && response.statusCode == 200) {
             // fs.writeFileSync("index.html",html);
             parseMatch(html);
+            count--;
+            if(count==0){
+                console.table(leaderboard);
+            }
         }
         else if (response.statusCode == 404) {
             console.log("Page not found");
@@ -52,25 +58,45 @@ function handleEachMatch(link) {
 }
 function parseMatch(html) {
     let $ = cheerio.load(html);
+    let format = $(".desc.text-truncate").text();
+    if (format.includes("ODI") == true) {
+        format = "ODI"
+    } else {
+        format = "T20I"
+    }
     let innings = $('.card.content-block.match-scorecard-table');
     innings = innings.splice(0,2);
     for(let i = 0 ; i < innings.length ; i++){
         let teamName = $(innings[i]).find("h5").text();
-        console.log(teamName);
+        teamName = teamName.split("Innings").shift();
         let players = $(innings[i]).find(".table.batsman tbody tr");
         for(let j = 0 ; j < players.length ; j++){
             let bCols = $(players[j]).find("td");
             let isBatsmanRow = $(bCols).hasClass("batsman-cell");
             if(isBatsmanRow){
                 let batsmanName = $(bCols[0]).text();
-                let score = $(bCols[2]).text();
-                console.log(batsmanName+" "+score);
+                let runs = $(bCols[2]).text();
+                // console.log(batsmanName+" "+runs);
+                addToLeaderBoard(batsmanName,teamName,format,Number(runs));
             }
         }
-        console.log("###############################");
+        // console.log("###############################");
     }
-    console.log("```````````````````````````````````````````````````````````````````");
+    // console.log("```````````````````````````````````````````````````````````````````");
 }
-function addToScoreBoard() {
-
+function addToLeaderBoard(name,teamName,format,runs) {
+    for(let i = 0 ; i < leaderboard.length ; i++){
+        let cPlayerInfo = leaderboard[i];
+        let match = cPlayerInfo.Name==name && cPlayerInfo.TeamName==teamName && cPlayerInfo.Format==format;
+        if(match){
+            cPlayerInfo.TotalRuns += runs;
+            return;
+        }
+    }
+    let playerInfo = {};
+    playerInfo.Name = name;
+    playerInfo.TeamName = teamName;
+    playerInfo.Format = format;
+    playerInfo.TotalRuns = runs;
+    leaderboard.push(playerInfo);
 }
