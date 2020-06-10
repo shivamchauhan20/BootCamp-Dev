@@ -24,9 +24,6 @@ function parseHtml(html) {
     let cNotices = [];
     let tBodyArr = $('.table-box table tbody');
     let trArr = $(tBodyArr[1]).find("tr");
-    let htmlFile = "";
-    htmlFile += fs.readFileSync("index.html");
-    let allNoticesHtml = "";
     for (let i = 0; i < trArr.length; i++) {
         if($(trArr[i]).hasClass("item-collapse")){
             break;
@@ -38,11 +35,16 @@ function parseHtml(html) {
         noticeObj.notice = notice;
         noticeObj.date = noticeDate;
         cNotices.push(noticeObj);
-        allNoticesHtml += `<tr><td>${notice}</td><td>${noticeDate}</td></tr>`
     }
     if(allNotices.length == 0){
         allNotices = cNotices;
         console.table(allNotices);
+        let htmlFile = fs.readFileSync("index.html") + "";
+        let allNoticesHtml = "";
+        for(let i = 0 ; i < allNotices.length ; i++){
+            let cNotice = allNotices[i];
+            allNoticesHtml += `<tr><td>${cNotice.notice}</td><td>${cNotice.date}</td></tr>`
+        }
         htmlFile = htmlFile.replace("{{content}}",allNoticesHtml);
         mail.sendMail(htmlFile);
     }
