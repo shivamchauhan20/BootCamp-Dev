@@ -6,8 +6,8 @@ nodemailer.createTestAccount((err, account) => {
     let transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-        user: '20shivamchauhan@gmail.com',
-        pass: 'xphtblpgjrgdundt'
+        user: '',
+        pass: ''
     }
     });
 
