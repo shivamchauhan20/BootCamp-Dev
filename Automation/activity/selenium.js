@@ -4,7 +4,7 @@ let browser = new swd.Builder();
 let tab = browser.forBrowser("chrome").build();
 let tabWillBeOpenedPromise = tab.get("https://www.hackerrank.com/auth/login?h_l=body_middle_left_button&h_r=login");
 let { email, password } = require("../../credentials.json");
-let gCodesElementsP,gInputArea,gTextArea;
+let gCodesElementsP, gInputArea, gTextArea;
 tabWillBeOpenedPromise
     .then(function () {
         let findTimeOutP = tab.manage().setTimeouts({
@@ -57,28 +57,37 @@ tabWillBeOpenedPromise
         return wUCBtnWillBeClickedP;
     })
     .then(function () {
-        let urlOfQP = tab.getCurrentUrl();
-        return urlOfQP;
+        let allQtagP = tab.findElements(swd.By.css("a.js-track-click.challenge-list-item"));
+        return allQtagP;
     })
-    .then(function (urlOfQ) {
-        let questionWillBeSolvedP = questionSolver();
-        return questionWillBeSolvedP;
+    .then(function (anchors) {
+        let allQLinksP = anchors.map(function (a) {
+            return a.getAttribute("href");
+        })
+        return Promise.all(allQLinksP);
+    })
+    .then(function (links) {
+        console.log(links);
+        let quesPromise = questionSolver(links[0]);
+        for (let i = 1; i < links.length; i++) {
+            quesPromise = quesPromise.then(function () {
+                return questionSolver(links[i]);
+            })
+        }
+        let lastQuestionWillBeSolvedP = quesPromise;
+        return lastQuestionWillBeSolvedP;
     })
     .then(function () {
-        console.log("First Question Solved");
+        console.log("All Questions Solved");
     })
     .catch(function (err) {
         console.log(err);
     });
 
-function questionSolver() {
+function questionSolver(url) {
     return new Promise(function (resolve, reject) {
-        let allCBTnWSP = tab.findElements(swd.By.css(".challenge-submit-btn"));
-        allCBTnWSP
-            .then(function (cBtnArr) {
-                let cBtnWillBeClickedP = cBtnArr[0].click();
-                return cBtnWillBeClickedP;
-            })
+        let quesPageWillBeOpened = tab.get(url);
+        quesPageWillBeOpened
             .then(function () {
                 let editorialWillBeFoundP = tab.findElement(swd.By.css("a[data-attr2='Editorial']"));
                 return editorialWillBeFoundP;
@@ -99,11 +108,11 @@ function questionSolver() {
                 let codeWillBePastedP = pasteCode(code);
                 return codeWillBePastedP;
             })
-            .then(function (){
+            .then(function () {
                 let submitBtnWillBeFoundP = tab.findElement(swd.By.css("button.hr-monaco-submit"));
                 return submitBtnWillBeFoundP;
             })
-            .then(function (submitBtn){
+            .then(function (submitBtn) {
                 let submitBtnWillBeClickedP = submitBtn.click();
                 return submitBtnWillBeClickedP;
             })
@@ -153,6 +162,7 @@ function handleLockBtn() {
         lockBtnWillBeFoundP
             .then(function (lockBtn) {
                 let lockBtnWillBeClickedP = lockBtn.click();
+                console.log("inside click");
                 return lockBtnWillBeClickedP;
             })
             .then(function () {
@@ -240,10 +250,10 @@ function pasteCode(code) {
             .then(function (tArea) {
                 gTextArea = tArea;
                 // let selectP = tArea.sendKeys(swd.Key.chord(swd.Key.CONTROL, "a"));
-                let selectP = tArea.sendKeys(swd.Key.CONTROL + "a"); 
+                let selectP = tArea.sendKeys(swd.Key.CONTROL + "a");
                 return selectP;
             })
-            .then(function (){
+            .then(function () {
                 // let copyP = gTextArea.sendKeys(swd.Key.chord(swd.Key.CONTROL, "v"));
                 let copyP = gTextArea.sendKeys(swd.Key.CONTROL + "v");
                 return copyP;
@@ -253,6 +263,6 @@ function pasteCode(code) {
             })
             .catch(function (err) {
                 reject(err);
-            })  
+            })
     })
 }
