@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="./index.js"></script>
     <link rel="stylesheet" href="style.css">
     <title><%=title%></title>
 </head>
@@ -11,19 +12,36 @@
 <body>
     <div class="menu">Menu</div>
     <div class="menu-options">Menu Options</div>
-    <div class="formulaBar">Formula Bar<input type="text"><input type="text"></div>
+    <div class="formulaBar"><input id="text-input" class="text-container ib" type="text"><input id="formual-input" class="formula-container" type="text">
+    </div>
     <div class="cell-container">
-        <%for(let i=1;i<=rows;i++){ %>
-        <div class="row">
-            <%for(let j=0;j<cols;j++){%>
-            <div class="col" contenteditable="true">
-                <%=`${i} - ${String.fromCharCode(65 + j)}`%>
-            </div>
-            <%}%>
+        <div id="top-left-cell"></div>
+        <div id="top-row">
+            <%for(let i = 0 ; i < cols ; i++){%>
+            <div class="cell">
+                <%=String.fromCharCode(i+65)%>
             </div>
             <%}%>
         </div>
-        <div class="sheets">Sheets</div>
+        <div id="left-col">
+            <%for(let j = 1 ; j <= rows ; j++){%>
+            <div class="cell">
+                <%=j%>
+            </div>
+            <%}%>
+        </div>
+        <div id="grid">
+            <% for(let i=0;i<rows;i++) { %>
+            <div class="row">
+                <% for(let j=0;j<cols;j++){ %>
+                <div class="cell" contenteditable="true" row-id=<%=i%> col-id=<%=j%>></div>
+                <%}%>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="sheets">Sheets</div>
 </body>
 
 </html>
