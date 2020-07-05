@@ -14,10 +14,13 @@ box-sizing: border-box;
     height: 20px;
 }
 
-
 .menu-options{
     height: 68px;
     border: 1px gray solid;
+    display: flex;
+    justify-content: space-evenly;
+    width: 133px;
+
 }
 .formula-container{
     width:calc(100vw - 18vw);
@@ -32,8 +35,8 @@ box-sizing: border-box;
 .cell-container{
     height: calc(100vh - 128px);
     /* background-color: green; */
-overflow: auto;
-position: relative;
+    overflow: auto;
+    position: relative;
 }
 #top-left-cell{
     position: absolute;
@@ -84,17 +87,6 @@ position: relative;
     width: 75px;
     height: 25px;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 .sheets{   
     height: 20px;
