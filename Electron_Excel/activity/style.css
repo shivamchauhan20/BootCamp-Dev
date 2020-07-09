@@ -14,13 +14,34 @@ box-sizing: border-box;
     height: 20px;
 }
 
-.menu-options{
-    height: 68px;
-    border: 1px gray solid;
+.menu-container{
+    height: 20px;
+    border: 1px solid red;
     display: flex;
-    justify-content: space-evenly;
-    width: 133px;
+    justify-content: space-evenly;    
+    width: 124px;
+}
 
+.menu-options-container{
+    height: 60px;
+    border: 1px solid green;
+    justify-content: space-evenly;
+    width: 363px;
+    align-items: center;
+    display: block;
+
+}
+.menu-options{
+    display: none;
+}
+.menu-options.selected{
+    display: flex;
+    justify-content: inherit;
+    align-items: center;
+    height: 100%;
+}
+.isOn{
+    background-color: lightslategrey;
 }
 .formula-container{
     width:calc(100vw - 18vw);
@@ -43,6 +64,7 @@ box-sizing: border-box;
     height: 25px;
     width: 25px;
     background-color: gray;
+    z-index: 3;
 }
 #top-row{
     display: flex;
@@ -50,6 +72,8 @@ box-sizing: border-box;
     position: absolute;
     left: 25px;
     top: 0px;
+    z-index: 2;
+    background-color: limegreen;
 }
 
 #grid{
@@ -61,15 +85,16 @@ box-sizing: border-box;
 #left-col{
     position: absolute;
     top: 25px;
+    z-index: 2;
+    background-color: limegreen;
 }
 #top-row> .cell{
     min-width: 63px;
-    border: 1px solid lightgray;
+    border: 1px solid black;
 }
 #left-col>.cell{
     width: 25px;
-    height: 25px;
-    background-color: lightgrey;
+    border: 1 px solid black;
 }
 .row{
     display: flex;
@@ -85,7 +110,7 @@ box-sizing: border-box;
 .cell {
     border: 1px solid black;
     width: 75px;
-    height: 25px;
+    min-height: 25px;
 }
 
 .sheets{   

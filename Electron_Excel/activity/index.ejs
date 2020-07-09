@@ -10,11 +10,51 @@
 </head>
 
 <body>
-    <div class="menu">Menu</div>
-    <div class="menu-options">
-        <div id="New">New</div>
-        <div id="Open">Open</div>
-        <div id="Save">Save</div>
+    <div class="menu-container">
+        <div class="menu" id="File">File</div>
+        <div class="menu" id="Home">Home</div>
+    </div>
+    <div class="menu-options-container">
+        <div class="menu-options" id="File-menu-options">
+            <div id="New">New</div>
+            <div id="Open">Open</div>
+            <div id="Save">Save</div>
+        </div>
+        <div class="menu-options" id="Home-menu-options">
+            <div class="menu-group">
+                <div class="menu-row">
+
+                    <select name="" id="font-family">
+                        <option value="Arial">Font-1</option>
+                        <option value="Cambria">Font-2</option>
+                        <option value="Georgia">Font-3</option>
+                        <option value="monospace">Font-4</option>
+                        <option value="sans-serif">Font-5</option>
+                    </select>
+
+                    <select name="" id="font-size">
+                        <option value="10">10</option>
+                        <option value="12">12</option>
+                        <option value="14">14</option>
+                        <option value="16">16</option>
+                        <option value="18">18</option>
+                        <option value="22">22</option>
+                    </select>
+                </div>
+                <div class="menu-row">
+                    <input type="button" id="bold" value="B">
+                    <input type="button" id="underline" value="U">
+                    <input type="button" id="italic" value="I">
+                    <input type="color" id="bg-color" value="rebeccapurple">
+                    <input type="color" id="text-color" value="gray">
+                </div>
+            </div>
+            <div class="menu-group">
+                <input type="button" id="left" value="L" halign="left">
+                <input type="button" id="center" value="C" halign="center">
+                <input type="button" id="right" value="R" halign="right">
+            </div>
+        </div>
     </div>
     <div class="formulaBar"><input id="address-input" class="text-container ib" type="text"><input id="formula-input" class="formula-container" type="text">
     </div>
@@ -28,9 +68,9 @@
             <%}%>
         </div>
         <div id="left-col">
-            <%for(let j = 1 ; j <= rows ; j++){%>
+            <%for(let j = 0 ; j < rows ; j++){%>
             <div class="cell">
-                <%=j%>
+                <%=j + 1%>
             </div>
             <%}%>
         </div>
