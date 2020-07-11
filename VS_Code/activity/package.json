@@ -11,6 +11,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^9.1.0"
+    "electron": "^9.1.0",
+    "jquery": "^3.5.1"
+  },
+  "dependencies": {
+    "jstree": "^3.3.10"
   }
 }

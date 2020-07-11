@@ -1,4 +1,5 @@
 const $ = require("jquery");
+const nodePath = require("path");
 require("jstree");
 
 $(document).ready(function(){
@@ -7,7 +8,7 @@ $(document).ready(function(){
     //jsTree
     let data = [];
     let currPath = process.cwd();
-    let text = currPath.basename();
+    let text = getPath(currPath);
     data.push({"id" : currPath ,  "parent" : "#" , "text" : text})
 
     $('#file-explorer').jstree({
@@ -15,5 +16,9 @@ $(document).ready(function(){
             "data" : data
         }
     })
+
+    function getPath(path){
+        return nodePath.basename(path);
+    }
 
 })
