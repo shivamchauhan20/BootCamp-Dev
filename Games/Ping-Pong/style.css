@@ -1,0 +1,33 @@
+*{
+    box-sizing: border-box;
+}
+html,body{
+    padding: 0px;
+    margin: 0px;
+}
+body{
+    background-image: url("3.gif");
+    background-size: cover;
+    height: 100vh;
+}
+.paddle{
+    position: fixed;
+    height: 150px;
+    width: 30px;
+    background-color: red;
+    border-radius: 24px;
+    border: 1px solid white;
+}
+#two{
+    right: 0px;
+}
+#ball{
+    position: fixed;
+    background-color: blue;
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    top: 50vh;
+    left: 50vw;
+    border: 1px solid white;
+}
