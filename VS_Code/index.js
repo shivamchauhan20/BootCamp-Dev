@@ -3,7 +3,10 @@ const path = require("path");
 const fs = require("fs");
 require("jstree");
 
-$(document).ready(function () {
+let myMonaco,editor;
+let tabArr = {};
+
+$(document).ready(async function () {
 
     let pPath = process.cwd();
     let name = path.basename(pPath);
@@ -16,27 +19,7 @@ $(document).ready(function () {
     let childArr = addCh(pPath);
     data = [...data, ...childArr];
 
-    const amdLoader = require('./node_modules/monaco-editor/min/vs/loader.js');
-    const amdRequire = amdLoader.require;
-    const amdDefine = amdLoader.require.define;
-
-    amdRequire.config({
-        baseUrl: './node_modules/monaco-editor/min'
-    });
-
-    // workaround monaco-css not understanding the environment
-    self.module = undefined;
-
-    amdRequire(['vs/editor/editor.main'], function () {
-        var editor = monaco.editor.create(document.getElementById('editor'), {
-            value: [
-                'function x() {',
-                '\tconsole.log("Hello world!");',
-                '}'
-            ].join('\n'),
-            language: 'javascript'
-        });
-    });
+    editor = await createEditor();
 
     $('#tree').jstree({
         "core": {
@@ -53,6 +36,13 @@ $(document).ready(function () {
                     return;
                 $("#tree").jstree().create_node(children[i], gcArr[j], "last");
             }
+        }
+    }).on("select_node.jstree", function (e, data) {
+        let fPath = data.node.id;
+        let isFile = fs.lstatSync(fPath).isFile();
+        if (isFile) {
+            createTab(fPath);
+            setData(fPath);
         }
     })
 })
@@ -74,4 +64,68 @@ function addCh(parentPath) {
         cdata.push(obj);
     }
     return cdata;
+}
+
+function createEditor() {
+    const amdLoader = require('./node_modules/monaco-editor/min/vs/loader.js');
+    const amdRequire = amdLoader.require;
+    const amdDefine = amdLoader.require.define;
+
+    amdRequire.config({
+        baseUrl: './node_modules/monaco-editor/min'
+    });
+
+    // workaround monaco-css not understanding the environment
+    self.module = undefined;
+
+    return new Promise(function (resolve, reject) {
+        amdRequire(['vs/editor/editor.main'], function () {
+            var editor = monaco.editor.create(document.getElementById('editor'), {
+                value: [
+                    'function x() {',
+                    '\tconsole.log("Hello world!");',
+                    '}'
+                ].join('\n'),
+                language: 'javascript'
+            });
+            myMonaco = monaco;
+            resolve(editor);
+        });
+    })
+}
+
+function createTab(fPath){
+    let fName = path.basename(fPath);
+    if(!tabArr[fPath]){
+        $("#tabs-row").append(`<div class="tab">
+        <div class="tab-name" id="${fPath}" onclick=handleTab(this)>${fName}</div>
+        <i class="fas fa-times" id="${fPath}" onclick=handleClose(this)></i>
+        </div>`)
+        tabArr[fPath] = fName;
+    }
+}
+
+function setData(fPath) {
+    let content = fs.readFileSync(fPath, "utf-8");
+    editor.getModel().setValue(content);
+    let ext = fPath.split(".").pop();
+    if (ext == 'js') {
+        ext = 'javascript';
+    }
+    myMonaco.editor.setModelLanguage(editor.getModel(), ext);
+}
+
+function handleTab(elem){
+    let fPath = $(elem).attr("id");
+    setData(fPath);
+}
+
+function handleClose(elem){
+    let fPath = $(elem).attr("id");
+    delete tabArr[fPath];
+    $(elem).parent().remove();
+    let firstPath = $(".tab .tab-name").eq(0).attr("id");
+    if(firstPath){
+        setData(firstPath);
+    }
 }
