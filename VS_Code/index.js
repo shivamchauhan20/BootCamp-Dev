@@ -1,9 +1,13 @@
 const $ = require("jquery");
 const path = require("path");
 const fs = require("fs");
+const os = require('os');
+const pty = require('node-pty');
+const Terminal = require('xterm').Terminal;
+const { FitAddon } = require('xterm-addon-fit');
 require("jstree");
 
-let myMonaco,editor;
+let myMonaco, editor;
 let tabArr = {};
 
 $(document).ready(async function () {
@@ -45,6 +49,7 @@ $(document).ready(async function () {
             setData(fPath);
         }
     })
+    createTerminal();
 })
 
 function addCh(parentPath) {
@@ -94,9 +99,9 @@ function createEditor() {
     })
 }
 
-function createTab(fPath){
+function createTab(fPath) {
     let fName = path.basename(fPath);
-    if(!tabArr[fPath]){
+    if (!tabArr[fPath]) {
         $("#tabs-row").append(`<div class="tab">
         <div class="tab-name" id="${fPath}" onclick=handleTab(this)>${fName}</div>
         <i class="fas fa-times" id="${fPath}" onclick=handleClose(this)></i>
@@ -115,17 +120,43 @@ function setData(fPath) {
     myMonaco.editor.setModelLanguage(editor.getModel(), ext);
 }
 
-function handleTab(elem){
+function handleTab(elem) {
     let fPath = $(elem).attr("id");
     setData(fPath);
 }
 
-function handleClose(elem){
+function handleClose(elem) {
     let fPath = $(elem).attr("id");
     delete tabArr[fPath];
     $(elem).parent().remove();
     let firstPath = $(".tab .tab-name").eq(0).attr("id");
-    if(firstPath){
+    if (firstPath) {
         setData(firstPath);
     }
+}
+
+function createTerminal() {
+    // Initialize node-pty with an appropriate shell
+    console.log(os.platform);
+    const shell = process.env[os.platform() === 'win32' ? 'COMSPEC' : 'SHELL'];
+    const ptyProcess = pty.spawn(shell, [], {
+        name: 'xterm-color',
+        cols: 80,
+        rows: 30,
+        cwd: process.cwd(),
+        env: process.env
+    });
+
+    // Initialize xterm.js and attach it to the DOM
+    const xterm = new Terminal();
+    const fitAddon = new FitAddon();
+    xterm.open(document.getElementById('terminal'));
+
+    // Setup communication between xterm.js and node-pty
+    xterm.onData(data => ptyProcess.write(data));
+    ptyProcess.on('data', function (data) {
+        xterm.write(data);
+    });
+    xterm.loadAddon(fitAddon);
+    fitAddon.fit();
 }
