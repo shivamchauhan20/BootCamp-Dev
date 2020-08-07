@@ -28,6 +28,7 @@ $(document).ready(async function () {
     $('#tree').jstree({
         "core": {
             "check_callback": true,
+            "themes" : { "icons": false },
             "data": data
         }
     }).on("open_node.jstree", function (e, data) {
@@ -50,6 +51,16 @@ $(document).ready(async function () {
         }
     })
     createTerminal();
+    let isDark = false;
+    $("#theme").on("click", function () {
+        if (isDark) {
+            myMonaco.editor.setTheme('vs-dark');
+        }
+        else{
+            myMonaco.editor.setTheme('vs');
+        }
+        isDark = !isDark;
+    })
 })
 
 function addCh(parentPath) {
@@ -91,7 +102,8 @@ function createEditor() {
                     '\tconsole.log("Hello world!");',
                     '}'
                 ].join('\n'),
-                language: 'javascript'
+                language: 'javascript',
+                automaticLayout : true
             });
             myMonaco = monaco;
             resolve(editor);
@@ -137,7 +149,6 @@ function handleClose(elem) {
 
 function createTerminal() {
     // Initialize node-pty with an appropriate shell
-    console.log(os.platform);
     const shell = process.env[os.platform() === 'win32' ? 'COMSPEC' : 'SHELL'];
     const ptyProcess = pty.spawn(shell, [], {
         name: 'xterm-color',
@@ -150,13 +161,17 @@ function createTerminal() {
     // Initialize xterm.js and attach it to the DOM
     const xterm = new Terminal();
     const fitAddon = new FitAddon();
-    xterm.open(document.getElementById('terminal'));
+    xterm.loadAddon(fitAddon);
+    xterm.setOption('theme', {
+        background: "rebeccapurple",
 
+    });
+    xterm.open(document.getElementById('terminal'));
     // Setup communication between xterm.js and node-pty
     xterm.onData(data => ptyProcess.write(data));
     ptyProcess.on('data', function (data) {
         xterm.write(data);
     });
-    xterm.loadAddon(fitAddon);
     fitAddon.fit();
+    myMonaco.editor.setTheme('vs-dark');
 }
