@@ -16,7 +16,7 @@
                 <img src="./NewIcons/Black_Pencil.svg" alt="" id="pencil" class="tool-img">
                 <div class="tool-options" id="pencil-options">
                     <div class="slider">
-                        <input type="range" value="1" min="1" max="50" id="range" onchange="handleSlider()">
+                        <input type="range" value="1" min="1" max="50">
                     </div>
                     <div class="colors">
                         <div class="color red" onclick="handleColor('red')"></div>
@@ -29,7 +29,7 @@
                 <img src="./NewIcons/Eraser.svg" alt="" id="eraser" class="tool-img">
                 <div class="tool-options" id="eraser-options">
                     <div class="slider">
-                        <input type="range" value="1" min="1" max="50" id="range" onchange="handleSlider()">
+                        <input type="range" value="1" min="1" max="50">
                     </div>
                 </div>
             </div>
@@ -38,6 +38,15 @@
             </div>
             <div class="tool">
                 <img src="./NewIcons/Redo.svg" alt="" id="redo" class="tool-img">
+            </div>
+            <div class="tool">
+                <img src="./NewIcons/StickyNote.svg" alt="" id="sticky" class="tool-img">
+            </div>
+            <div class="tool">
+                    <label for="upload">
+                      <img src="./NewIcons/Photo.svg" class="tool-img" style="cursor: pointer;"/>
+                    </label>                  
+                    <input id="upload" type="file" style="display: none;"/>
             </div>
         </div>
     </div>
@@ -60,6 +69,8 @@
     </script>
     <script src="tools.js"></script>
     <script src="script.js"></script>
+    <script src="sticky.js"></script>
+    <script src="img.js"></script>
 </body>
 
 </html>

@@ -25,10 +25,11 @@ body,html{
     justify-content: center;
 }
 .tool-img{
-    height: 85%;
-    width: 10%;
+    height: 83%;
+    width: 100%;
 }
 .tool{
+    width: 20%;
     position: relative;
 }
 .tool-options{
@@ -71,5 +72,43 @@ input[type='range']{
 }
 .blue{
     background: blue;
+}
+.stickyPad{
+    height: 14rem;
+    width: 16rem;
+    /* background: yellow; */
+    position: absolute;
+    top: 34vh;
+    left: 20vw;
+}
+.navBar{
+    height: 16%;
+    background: sandybrown;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    /* padding-right: 1rem; */
+}
+
+.container{
+    height: calc( 14rem - 16%);
+}
+textarea{
+    height: 100%;
+    width: 100%;
+}
+.close{
+    height: 60%;
+    width: 9%;
+    border-radius: 50%;
+    background: red;
+    margin-right: 0.4rem;
+}
+.minimize{
+    height: 60%;
+    width: 9%;
+    border-radius: 50%;
+    background: green;
+    margin-right: 0.4rem;
 }
 

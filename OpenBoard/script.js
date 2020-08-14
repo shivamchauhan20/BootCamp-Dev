@@ -77,9 +77,7 @@ function undoMaker() {
 function redoMaker() {
     if(redoArr.length > 0){
         let tempArr = redoArr.pop();
-        for(let i = 0 ; i < tempArr.length ; i++){
-            points.push(tempArr[i]);
-        }
+        points.push(...tempArr);
         ctx.clearRect(0,0,board.width,board.height);
         redraw();
     }
