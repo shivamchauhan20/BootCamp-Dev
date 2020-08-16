@@ -15,6 +15,7 @@ board.addEventListener("mousedown", function (e) {
         color: ctx.strokeStyle,
         width: ctx.lineWidth
     }
+    socket.emit("md", mdo);
     points.push(mdo);
 })
 board.addEventListener("mousemove", function (e) {
@@ -31,6 +32,7 @@ board.addEventListener("mousemove", function (e) {
             color: ctx.strokeStyle,
             width: ctx.lineWidth
         }
+        socket.emit("mm", mmo);
         points.push(mmo);
     }
 })
@@ -66,7 +68,7 @@ function undoMaker() {
                 break;
             }
             tempArr.unshift(points.pop());
-            
+
         }
         redoArr.push(tempArr);
         ctx.clearRect(0, 0, board.width, board.height);
@@ -75,10 +77,24 @@ function undoMaker() {
 }
 
 function redoMaker() {
-    if(redoArr.length > 0){
+    if (redoArr.length > 0) {
         let tempArr = redoArr.pop();
         points.push(...tempArr);
-        ctx.clearRect(0,0,board.width,board.height);
+        ctx.clearRect(0, 0, board.width, board.height);
         redraw();
     }
 }
+
+socket.on("onmd", function (point) {
+    let {x,y,width} = point;
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+});
+
+socket.on("onmm", function (point) {
+    let {x,y,width} = point;
+    ctx.lineWidth = width;
+    ctx.lineTo(x, y);
+    ctx.stroke();
+});

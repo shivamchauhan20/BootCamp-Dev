@@ -1,3 +1,4 @@
+var socket = io.connect('http://localhost:3000');
 let pencil = document.querySelector("#pencil");
 let eraser = document.querySelector("#eraser");
 let undo = document.querySelector("#undo");
@@ -21,6 +22,7 @@ pencil.addEventListener("click", function () {
         eraserOptions.classList.remove("show");
         ctx.strokeStyle = "black";
         ctx.lineWidth = pencilSize;
+        socket.emit("color","Black");
     }
 });
 eraser.addEventListener("click", function () {
@@ -32,6 +34,7 @@ eraser.addEventListener("click", function () {
         pencilOptions.classList.remove("show");
         ctx.strokeStyle = "white";
         ctx.lineWidth = eraserSize;
+        socket.emit("color","White");
     }
 });
 undo.addEventListener("click", function () {
@@ -54,6 +57,7 @@ sticky.addEventListener("click",function(){
 })
 
 function handleColor(color) {
+    socket.emit("color",color);
     ctx.strokeStyle = color;
 }
 
@@ -68,4 +72,8 @@ sliders.forEach(function (slider) {
         }
         ctx.lineWidth = value;
     })
+})
+
+socket.on("colorchange",function(color){
+    ctx.strokeStyle = color;
 })

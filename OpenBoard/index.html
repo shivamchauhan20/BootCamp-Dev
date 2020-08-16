@@ -44,10 +44,15 @@
             </div>
             <div class="tool">
                     <label for="upload">
-                      <img src="./NewIcons/Photo.svg" class="tool-img" style="cursor: pointer;"/>
+                      <img src="./NewIcons/Photo.svg" class="tool-img"/>
                     </label>                  
                     <input id="upload" type="file" style="display: none;"/>
             </div>
+            <div class="tool">
+                <label for="download">
+                  <img src="./NewIcons/Download.svg" id="download" class="tool-img"/>
+                </label>
+        </div>
         </div>
     </div>
     <div class="drawing-area">
@@ -67,6 +72,8 @@
         let ctx = board.getContext("2d");
         ctx.beginPath(0, 0);
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.4/socket.io.js" ></script>
+    <script src="./utility//utils.js"></script>
     <script src="tools.js"></script>
     <script src="script.js"></script>
     <script src="sticky.js"></script>
