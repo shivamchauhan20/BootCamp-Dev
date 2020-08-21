@@ -1,4 +1,4 @@
-var socket = io.connect('http://localhost:3000');
+var socket = io.connect('https://s-whiteboard.herokuapp.com/');
 let pencil = document.querySelector("#pencil");
 let eraser = document.querySelector("#eraser");
 let undo = document.querySelector("#undo");
