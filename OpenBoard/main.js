@@ -19,7 +19,7 @@ function createWindow(){
         //unhide the app so user could view it
         win.show();
         //to open dev tools
-        win.webContents.openDevTools();
+        // win.webContents.openDevTools();
     })
 }
 app.whenReady().then(createWindow);
