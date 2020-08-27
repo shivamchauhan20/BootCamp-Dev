@@ -1,5 +1,5 @@
 console.log("I am content script");
-function addImages() {
+function changeImages() {
     let imgArr = document.querySelectorAll("img");
     let images = ["images/img-1.jpg", "images/img-2.jpg", "images/img-3.jpg", "images/img-4.jpg", "images/img-5.jpeg"]
     for (let i = 0; i < imgArr.length; i++) {
@@ -12,6 +12,6 @@ function addImages() {
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log(request);
-        addImages();
+        changeImages();
         sendResponse("Hello from Content");
     });
