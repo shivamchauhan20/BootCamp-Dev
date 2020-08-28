@@ -13,13 +13,15 @@ btn.addEventListener("click", async function () {
 function sendMessage(message) {
     return new Promise(function (resolve, reject) {
         chrome.runtime.sendMessage(message, function (response) {
+            console.log(response);
             resolve(response);
         })
     })
 }
 
-(async function () {
+(async function init(){
     let blockList = await sendMessage({ type: "getList" });
+    console.log(blockList);
     for (let i = 0; i < blockList.length; i++) {
         addToList(blockList[i].site);
     }
