@@ -5,4 +5,4 @@ let {getAllUsers,createUser,getUser,updateUser,deleteUser} = require("../control
 userRouter.route("/").get(getAllUsers).post(createUser);
 userRouter.route("/:uid").get(getUser).patch(updateUser).delete(deleteUser);
 
-module.exports.userRouter = userRouter;
+module.exports = userRouter;

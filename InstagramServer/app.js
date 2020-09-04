@@ -1,8 +1,12 @@
-const app = require("express");
-let userRouter = require("./routers/userRouter");
+const express = require("express");
+const app = express();
+const cors = require("cors");
+const userRouter = require("./routers/userRouter");
 
+app.use(cors());
 app.use(express.json());
-app.use("/api/v1/users",userRouter);
+
+app.use("/api/v1/user",userRouter);
 
 app.use("*",(req,res)=>{
     res.status(404).json({

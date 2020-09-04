@@ -1,35 +1,50 @@
 const fs = require("fs");
-let users = require("../models/users.json");
+const path = require("path");
+let users = require(path.join(__dirname, "../models/users.json"));
 const { v4: uuidv4 } = require('uuid');
+const userModel = require("../models/userModel");
 
 const getAllUsers = (req,res)=>{
-    res.status(200).json({
+    res.status(201).json({
         status : "success",
         users : users
     });
 }
 
-const createUser = (req,res)=>{
+const createUser = async (req,res)=>{
     let userObj = req.body;
     let uid = uuidv4();
     userObj.uid = uid;
-    users.push(JSON.stringify(userObj));
-    fs.writeFileSync("../models/users.json",users);
-    res.status(200).json({
-        status : "user added",
-        "user" : userObj
-    });
+    try {
+        let nDBUser = await userModel.create(userObj);
+        res.status(201).json({
+            status: "success",
+            user: nDBUser
+        })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            status: "success",
+            "message": err.message
+        })
+    }
 }
 
-const getUser = (req,res)=>{
+const getUser = async (req,res)=>{
     let uid = req.params.uid;
-    let user = users.filter((users)=>{
-        return user.uid == uid;
-    });
-    res.status(200).json({
-        status : "success",
-        "data" : user.length == 0 ? "user not found" : user
-    });
+    try{
+        let userObj = await userModel.getByID(uid);
+        res.status(201).json({
+            status : "success",
+            user : userObj
+        })
+    }
+    catch(err){
+        res.status(500).json({
+            status: "success",
+            "message": err
+        })
+    }
 }
 
 const updateUser = (req,res)=>{
@@ -40,9 +55,9 @@ const updateUser = (req,res)=>{
     for(let key in toBeUpdated){
         user[key] = toBeUpdated[key];
     }
-    fs.writeFileSync("../models/users.json",users);
+    fs.writeFileSync(path.join(__dirname, "../models/users.json"),JSON.stringify(users));
 
-    res.status(200).json({
+    res.status(201).json({
         status : "successs",
         message : "user updated"
     })
@@ -53,9 +68,9 @@ const deleteUser = (req,res)=>{
     users = users.filter((user)=>{
         return user.uid != uid;
     });
-    fs.writeFileSync("../models/users.json",users);
+    fs.writeFileSync(path.join(__dirname, "../models/users.json"),JSON.stringify(users));
     
-    res.status(200).json({
+    res.status(201).json({
         status : "success",
         "message" : "user deleted"
     })
