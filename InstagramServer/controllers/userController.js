@@ -3,15 +3,16 @@ const path = require("path");
 let users = require(path.join(__dirname, "../models/users.json"));
 const { v4: uuidv4 } = require('uuid');
 const userModel = require("../models/userModel");
+const userFollower = require("../models/userFollowerModel");
 
-const getAllUsers = (req,res)=>{
-    res.status(201).json({
-        status : "success",
-        users : users
+const getAllUsers = (req, res) => {
+    res.status(200).json({
+        status: "success",
+        users: users
     });
 }
 
-const createUser = async (req,res)=>{
+const createUser = async (req, res) => {
     let userObj = req.body;
     let uid = uuidv4();
     userObj.uid = uid;
@@ -30,58 +31,117 @@ const createUser = async (req,res)=>{
     }
 }
 
-const getUser = async (req,res)=>{
+const getUser = async (req, res) => {
     let uid = req.params.uid;
-    try{
+    try {
         let userObj = await userModel.getByID(uid);
-        res.status(201).json({
-            status : "success",
-            user : userObj
+        res.status(200).json({
+            status: "success",
+            user: userObj
         })
     }
-    catch(err){
+    catch (err) {
         res.status(500).json({
             status: "success",
-            "message": err
+            "message": err.message
         })
     }
 }
 
-const updateUser = (req,res)=>{
+const updateUser = async (req, res) => {
     let uid = req.params.uid;
-    let user = getUserByID(uid);
     let toBeUpdated = req.body;
-
-    for(let key in toBeUpdated){
-        user[key] = toBeUpdated[key];
+    try {
+        let result = await userModel.update(uid, toBeUpdated);
+        res.status(200).json({
+            status: "successs",
+            message: result
+        })
     }
-    fs.writeFileSync(path.join(__dirname, "../models/users.json"),JSON.stringify(users));
-
-    res.status(201).json({
-        status : "successs",
-        message : "user updated"
-    })
+    catch (err) {
+        console.log(err);
+        res.status(500).json({
+            status: "failure",
+            "message": err.message
+        })
+    }
 }
 
-const deleteUser = (req,res)=>{
+const deleteUser = async (req, res) => {
     let uid = req.params.uid;
-    users = users.filter((user)=>{
-        return user.uid != uid;
-    });
-    fs.writeFileSync(path.join(__dirname, "../models/users.json"),JSON.stringify(users));
-    
-    res.status(201).json({
-        status : "success",
-        "message" : "user deleted"
-    })
+    try {
+        let result = await userModel.delete(uid);
+        res.status(200).json({
+            status: "success",
+            message: result
+        })
+    }
+    catch (err) {
+        res.status(50).json({
+            status: "failure",
+            "message": err.message
+        })
+    }
 }
 
-function getUserByID(uid){
-    let userArr = users.filter((user)=>{
-        return user.uid == uid;
-    })
+const createRequest = async (req, res) => {
+    let obj = req.body; //In obj follower_id is your id and user_id is the id of person to which request is sent.
+    try {
+        await userFollower.addPendingFollower(obj);
+        let { name,is_public } = await userModel.getByID(obj.user_id);
+        if (is_public) {
+            await userFollower.acceptRequest(obj.user_id, obj.follower_id);
+            return res.status(201).json({
+                status: "success",
+                message: "You are now following "+name
+            });
+        }
+        res.status(201).json({
+            status: "success",
+            message: "Request sent"
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            status: "failure",
+            message: err.message
+        })
+    }
+}
 
-    return userArr[0];
+const getAllFollowers = async (req, res) => {
+    let user_id = req.params.uid;
+    try {
+        let result = await userFollower.getAllFollowers(user_id);
+        res.status(200).json({
+            status: "success",
+            message: result
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            status: "failure",
+            message: err.message
+        });
+    }
+}
+
+const acceptRequest = async (req, res) => {
+    let user_id = req.params.uid;
+    let {follower_id } = req.body;
+    try {
+        await userFollower.acceptRequest(user_id, follower_id);
+        res.status(200).json({
+            status: "success",
+            message: "Request accepted"
+        });
+    }
+    catch (err) {
+        res.status(500).json({
+            status: "failure",
+            message: err.message
+        });
+    }
 }
 
 module.exports.getAllUsers = getAllUsers;
@@ -89,3 +149,6 @@ module.exports.createUser = createUser;
 module.exports.getUser = getUser;
 module.exports.updateUser = updateUser;
 module.exports.deleteUser = deleteUser;
+module.exports.createRequest = createRequest;
+module.exports.getAllFollowers = getAllFollowers;
+module.exports.acceptRequest = acceptRequest;
