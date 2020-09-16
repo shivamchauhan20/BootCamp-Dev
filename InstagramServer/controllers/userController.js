@@ -144,6 +144,23 @@ const acceptRequest = async (req, res) => {
     }
 }
 
+const getFollowerCount = async (req,res) =>{
+    let user_id = req.params.uid;
+    try{
+        let result = await userFollower.getFollowerCount(user_id);
+        res.status(201).json({
+            status:"success",
+            message: result
+        });
+    }
+    catch(err){
+        res.status(500).json({
+            status: "failure",
+            message: err.message
+        });
+    }
+}
+
 module.exports.getAllUsers = getAllUsers;
 module.exports.createUser = createUser;
 module.exports.getUser = getUser;
@@ -152,3 +169,4 @@ module.exports.deleteUser = deleteUser;
 module.exports.createRequest = createRequest;
 module.exports.getAllFollowers = getAllFollowers;
 module.exports.acceptRequest = acceptRequest;
+module.exports.getFollowerCount = getFollowerCount;

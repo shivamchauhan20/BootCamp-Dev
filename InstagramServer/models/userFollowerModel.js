@@ -43,6 +43,21 @@ const acceptRequest = (user_id,follower_id) => {
     });
 }
 
+const getFollowerCount = (user_id)=>{
+    return new Promise((resolve,reject)=>{
+        const query = 'SELECT COUNT(*) AS COUNT FROM user_follower where user_id =? AND is_accepted = "1"';
+        connection.query(query,[user_id],(err,result)=>{
+            if(err){
+                reject(err);
+            }
+            else{
+                resolve(result);
+            }
+        });
+    });
+}
+
 module.exports.addPendingFollower = addPendingFollower;
 module.exports.getAllFollowers = getAllFollowers;
 module.exports.acceptRequest = acceptRequest;
+module.exports.getFollowerCount = getFollowerCount;
