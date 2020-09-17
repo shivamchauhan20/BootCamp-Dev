@@ -1,9 +1,9 @@
-const fs = require("fs");
 const path = require("path");
 let users = require(path.join(__dirname, "../models/users.json"));
 const { v4: uuidv4 } = require('uuid');
 const userModel = require("../models/userModel");
 const userFollower = require("../models/userFollowerModel");
+const userFollowing = require("../models/userFollowingModel");
 
 const getAllUsers = (req, res) => {
     res.status(200).json({
@@ -14,8 +14,8 @@ const getAllUsers = (req, res) => {
 
 const createUser = async (req, res) => {
     let userObj = req.body;
-    let uid = uuidv4();
-    userObj.uid = uid;
+    let id = uuidv4();
+    userObj.id = id;
     try {
         let nDBUser = await userModel.create(userObj);
         res.status(201).json({
@@ -25,7 +25,7 @@ const createUser = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).json({
-            status: "success",
+            status: "failure",
             "message": err.message
         })
     }
@@ -91,6 +91,7 @@ const createRequest = async (req, res) => {
         let { name,is_public } = await userModel.getByID(obj.user_id);
         if (is_public) {
             await userFollower.acceptRequest(obj.user_id, obj.follower_id);
+            await userFollowing.addFollowing({user_id : obj.follower_id,following_id : obj.user_id})
             return res.status(201).json({
                 status: "success",
                 message: "You are now following "+name
@@ -126,11 +127,12 @@ const getAllFollowers = async (req, res) => {
     }
 }
 
-const acceptRequest = async (req, res) => {
+const acceptRequestHandler = async (req, res) => {
     let user_id = req.params.uid;
     let {follower_id } = req.body;
     try {
         await userFollower.acceptRequest(user_id, follower_id);
+        await userFollowing.addFollowing({user_id : follower_id,following_id : user_id});
         res.status(200).json({
             status: "success",
             message: "Request accepted"
@@ -168,5 +170,5 @@ module.exports.updateUser = updateUser;
 module.exports.deleteUser = deleteUser;
 module.exports.createRequest = createRequest;
 module.exports.getAllFollowers = getAllFollowers;
-module.exports.acceptRequest = acceptRequest;
+module.exports.acceptRequestHandler = acceptRequestHandler;
 module.exports.getFollowerCount = getFollowerCount;

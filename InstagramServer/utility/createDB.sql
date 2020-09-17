@@ -14,3 +14,17 @@ CREATE TABLE IF NOT EXISTS user_follower(
     is_accepted Boolean DEFAULT false,
     INDEX (user_id)
 );
+CREATE TABLE IF NOT EXISTS POST (
+    id VARCHAR(255) PRIMARY KEY,
+    created_at DATETIME NOT NULL,
+    author_id VARCHAR(80) NOT NULL,
+    descp VARCHAR(255),
+    p_img_url VARCHAR(255) NOT NULL,
+    INDEX (author_id) 
+);
+CREATE TABLE IF NOT EXISTS user_following(
+    user_id VARCHAR(255) NOT NULL,
+    following_id VARCHAR(255) NOT NULL,
+    
+    INDEX (user_id)
+);

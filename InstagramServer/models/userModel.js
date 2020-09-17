@@ -1,25 +1,28 @@
 const connection = require("./connection");
 let util = require("util");
+const factory = require("./factoryModel");
 
-const create = (userObj) => {
-    return new Promise(function (resolve, reject) {
-        // let sql = `INSERT INTO user (uid, name, phone, email, handle, bio) VALUES ('${userObj.uid}','${userObj.name}','${userObj.phone}','${userObj.email}','${userObj.handle}','${userObj.bio}');`;
-        connection.query('INSERT INTO user SET ?', userObj, function (err, result) {
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            else {
-                console.log("1 record inserted");
-                resolve(result);
-            }
-        });
-    })
-}
+// const create = (userObj) => {
+//     return new Promise(function (resolve, reject) {
+//         // let sql = `INSERT INTO user (id, name, phone, email, handle, bio) VALUES ('${userObj.id}','${userObj.name}','${userObj.phone}','${userObj.email}','${userObj.handle}','${userObj.bio}');`;
+//         connection.query('INSERT INTO user SET ?', userObj, function (err, result) {
+//             if (err) {
+//                 console.log(err);
+//                 reject(err);
+//             }
+//             else {
+//                 console.log("1 record inserted");
+//                 resolve(result);
+//             }
+//         });
+//     })
+// }
+let create = factory.createFactory("user");
 
-const getByID = (uid) => {
+
+const getByID = (id) => {
     return new Promise(function (resolve, reject) {
-        connection.query(`SELECT * FROM user WHERE uid="${uid}"`, function (err, result) {
+        connection.query(`SELECT * FROM user WHERE id="${id}"`, function (err, result) {
             if (err) {
                 reject(err);
             }
@@ -30,10 +33,10 @@ const getByID = (uid) => {
     })
 }
 
-const update = (uid, toBeUpdated) => {
+const update = (id, toBeUpdated) => {
     return new Promise((resolve, reject) => {
-        const query = 'UPDATE user SET ? WHERE uid = ?';
-        connection.query(query, [toBeUpdated, uid], (err, result) => {
+        const query = 'UPDATE user SET ? WHERE id = ?';
+        connection.query(query, [toBeUpdated, id], (err, result) => {
             if (err) {
                 reject(err);
             }
@@ -44,10 +47,10 @@ const update = (uid, toBeUpdated) => {
     });
 }
 
-const del = (uid) => {
+const del = (id) => {
     return new Promise((resolve, reject) => {
-        const query = "DELETE FROM user WHERE uid = ?";
-        connection.query(query,[uid],(err,result)=>{
+        const query = "DELETE FROM user WHERE id = ?";
+        connection.query(query,[id],(err,result)=>{
             if(err){
                 reject(err);
             }
