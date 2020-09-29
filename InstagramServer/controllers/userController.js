@@ -51,6 +51,9 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
     let uid = req.params.uid;
     let toBeUpdated = req.body;
+    if(req.file){
+        toBeUpdated.pimg_url = "user/" + req.file.filename;
+    }
     try {
         let result = await userModel.update(uid, toBeUpdated);
         res.status(200).json({
