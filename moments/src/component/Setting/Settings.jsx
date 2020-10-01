@@ -6,26 +6,29 @@ class Settings extends Component {
         name: "",
         handle: "",
         bio: "",
-        disabled: ""
+        disabled: true
     }
+    fileRef = React.createRef();
 
-    componentDidMount(){
+    componentDidMount() {
+        console.log("Component Did Mount");
         axios.get("http://localhost:2012/api/v1/user/7a5da2de-dd5c-4f9b-b361-b387f609cc04")
-        .then((res)=>{
-            let {src,name,handle,bio} = res;
-            this.setState({
-                src : src,
-                name : name,
-                handle : handle,
-                bio : bio
+            .then((res) => {
+                console.log(res);
+                let { pimg_url, name, handle, bio } = res.data.user;
+                this.setState({
+                    src: pimg_url,
+                    name: name,
+                    handle: handle,
+                    bio: bio
+                })
             })
-        })
     }
 
     handleEdit = (event) => {
         event.preventDefault();
         this.setState({
-            disabled : false
+            disabled: false
         })
     }
 
@@ -34,19 +37,31 @@ class Settings extends Component {
         let prop = event.target.name;
         let val = event.target.value;
         this.setState({
-            [prop] : val
+            [prop]: val
         })
     }
 
-    handleSubmit = async () => {
-        
+    handleSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData();
+        let img = this.fileRef.current.files[0];
+        formData.append("photo", img);
+        formData.append("name", this.state.name);
+        formData.append("handle", this.state.handle);
+        formData.append("bio", this.state.bio);
+        let { data } = await axios.patch("http://localhost:2012/api/v1/user/7a5da2de-dd5c-4f9b-b361-b387f609cc04",formData);
+        console.log(data);
+        this.setState({
+            disabled: true
+        });
     }
 
     render() {
         return (
             <React.Fragment>
                 <form onSubmit={this.handleSubmit}>
-                    <img src={this.state.src}></img>
+                    <img alt="" src={this.state.src}></img>
+                    <input type="file" ref={this.fileRef} />
                     <label htmlFor="name">Name
                     <input name="name" id="name"
                             onChange={this.handleChange}
@@ -74,7 +89,5 @@ class Settings extends Component {
             </React.Fragment>);
     }
 }
-
-export default Settings;
 
 export default Settings;
